@@ -18,4 +18,5 @@ export interface LoginResponse {
   tokenType: string;
   id: number;
   username: string;
+  roles: string[];
 }

@@ -22,8 +22,8 @@ export const authService = {
       console.log('Response status:', response.status);
       console.log('Login response:', response.data);
       
-      // Determinar role baseado no username (temporário)
-      const role: UserRole = response.data.username === 'admin' ? 'admin' : 'user';
+      // Determinar role baseado nas roles do backend
+      const role: UserRole = response.data.roles.includes('ROLE_ADMIN') ? 'admin' : 'user';
       
       const user: User = {
         username: response.data.username,
