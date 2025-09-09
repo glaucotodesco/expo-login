@@ -10,9 +10,9 @@ interface AuthContextType {
 }
 
 /*
-  É como uma “caixa” que armazena valores (user, isLoading, login, logout) 
-  e permite que eles sejam acessados de qualquer lugar da árvore de componentes 
-  sem precisar passar props manualmente.
+  Context acts as a "box" that stores values (user, isLoading, login, logout) 
+  and allows them to be accessed from anywhere in the component tree 
+  without manually passing props.
 */
 const AuthContext = createContext<AuthContextType>({
   user: null,
@@ -22,8 +22,8 @@ const AuthContext = createContext<AuthContextType>({
 });
 
 /*
-  O AuthProvider é um componente que envolve toda a aplicação e fornece o contexto
-  de autenticação para todos os componentes filhos.
+  AuthProvider is a component that wraps the entire application and provides
+  authentication context to all child components.
 */
 export function AuthProvider({ children }: { children: React.ReactNode }) {
 
@@ -38,10 +38,16 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     try {
       const userData = await AsyncStorage.getItem('user');
       if (userData) {
-        setUser(JSON.parse(userData));
+        try {
+          setUser(JSON.parse(userData));
+        } catch (parseError) {
+          console.error('Error parsing user data:', parseError);
+          await AsyncStorage.removeItem('user');
+          setUser(null);
+        }
       }
     } catch (error) {
-      console.error('Erro ao verificar autenticação:', error);
+      console.error('Error checking authentication:', error);
     } finally {
       setIsLoading(false);
     }
@@ -52,7 +58,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       await AsyncStorage.setItem('user', JSON.stringify(user));
       setUser(user);
     } catch (error) {
-      console.error('Erro ao fazer login:', error);
+      console.error('Error during login:', error);
     }
   };
 
@@ -61,7 +67,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       await AsyncStorage.removeItem('user');
       setUser(null);
     } catch (error) {
-      console.error('Erro ao fazer logout:', error);
+      console.error('Error during logout:', error);
     }
   };
 
@@ -72,5 +78,4 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   );
 }
 
-//
 export const useAuth = () => useContext(AuthContext);

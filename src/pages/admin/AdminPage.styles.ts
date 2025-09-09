@@ -1,5 +1,18 @@
 import { StyleSheet } from 'react-native';
 
+const baseButton = {
+  padding: 15,
+  borderRadius: 8,
+  marginBottom: 10,
+};
+
+const baseButtonText = {
+  color: '#fff',
+  textAlign: 'center' as const,
+  fontSize: 16,
+  fontWeight: 'bold' as const,
+};
+
 export const styles = StyleSheet.create({
   container: {
     flex: 1,
@@ -24,29 +37,17 @@ export const styles = StyleSheet.create({
     marginBottom: 40,
     color: '#666',
   },
-  logoutButton: {
-    backgroundColor: '#dc3545',
-    padding: 15,
-    borderRadius: 8,
-  },
-  logoutButtonText: {
-    color: '#fff',
-    textAlign: 'center',
-    fontSize: 16,
-    fontWeight: 'bold',
-  },
   button: {
+    ...baseButton,
     backgroundColor: '#007bff',
-    padding: 15,
-    borderRadius: 8,
-    marginBottom: 10,
   },
-  buttonText: {
-    color: '#fff',
-    textAlign: 'center',
-    fontSize: 16,
-    fontWeight: 'bold',
+  buttonText: baseButtonText,
+  logoutButton: {
+    ...baseButton,
+    backgroundColor: '#dc3545',
+    marginBottom: 0,
   },
+  logoutButtonText: baseButtonText,
   testResult: {
     backgroundColor: '#f8f9fa',
     padding: 15,

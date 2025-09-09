@@ -5,11 +5,15 @@ function AppLayout() {
   const { user, isLoading } = useAuth();
 
   if (isLoading) {
-    return null; // ou um componente de loading
+    return (
+      <Stack>
+        <Stack.Screen name="loading" options={{ headerShown: false }} />
+      </Stack>
+    );
   }
 
   const isLoggedIn = !!user;
-  const isAdmin = user?.role === 'admin';
+  const isAdmin = user?.roles?.includes('admin') || false;
 
   return (
     <Stack>

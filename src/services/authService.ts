@@ -22,12 +22,14 @@ export const authService = {
       console.log('Response status:', response.status);
       console.log('Login response:', response.data);
       
-      // Determinar role baseado nas roles do backend
-      const role: UserRole = response.data.roles.includes('ROLE_ADMIN') ? 'admin' : 'user';
+      // Map backend roles to UserRole array
+      const roles: UserRole[] = response.data.roles?.map(role => 
+        role === 'ROLE_ADMIN' ? 'admin' as UserRole : 'user' as UserRole
+      ) || ['user'];
       
       const user: User = {
         username: response.data.username,
-        role,
+        roles,
         token: response.data.accessToken,
       };
 

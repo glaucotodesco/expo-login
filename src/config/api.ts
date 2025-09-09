@@ -1,5 +1,12 @@
+const getBaseUrl = () => {
+  if (process.env.NODE_ENV === 'production') {
+    return process.env.EXPO_PUBLIC_API_URL || 'https://api.yourapp.com';
+  }
+  return process.env.EXPO_PUBLIC_API_URL || 'http://localhost:8080/api';
+};
+
 export const API_CONFIG = {
-  BASE_URL: 'http://localhost:8080/api',
+  BASE_URL: getBaseUrl(),
   ENDPOINTS: {
     SIGNIN: '/auth/signin',
     SIGNUP: '/auth/signup',

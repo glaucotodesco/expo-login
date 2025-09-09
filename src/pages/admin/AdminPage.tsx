@@ -15,6 +15,16 @@ export function AdminPage() {
     router.replace(ROUTES.LOGIN);
   };
 
+  const handleTestEndpoint = async (endpoint: 'admin' | 'user') => {
+    if (!user) return;
+    const result = await authService.testEndpoint(endpoint, user.token);
+    if (result.success) {
+      setTestResult(result.data);
+    } else {
+      Alert.alert('Erro', result.error);
+    }
+  };
+
   if (!user) {
     return (
       <View style={styles.loadingContainer}>
@@ -30,28 +40,14 @@ export function AdminPage() {
       
       <TouchableOpacity 
         style={styles.button} 
-        onPress={async () => {
-          const result = await authService.testEndpoint('admin', user.token);
-          if (result.success) {
-            setTestResult(result.data);
-          } else {
-            Alert.alert('Erro', result.error);
-          }
-        }}
+        onPress={() => handleTestEndpoint('admin')}
       >
         <Text style={styles.buttonText}>Testar Endpoint Admin</Text>
       </TouchableOpacity>
       
       <TouchableOpacity 
         style={styles.button} 
-        onPress={async () => {
-          const result = await authService.testEndpoint('user', user.token);
-          if (result.success) {
-            setTestResult(result.data);
-          } else {
-            Alert.alert('Erro', result.error);
-          }
-        }}
+        onPress={() => handleTestEndpoint('user')}
       >
         <Text style={styles.buttonText}>Testar Endpoint User</Text>
       </TouchableOpacity>
