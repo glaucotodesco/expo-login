@@ -7,7 +7,7 @@ import { ROUTES } from '../../constants/routes';
 import { styles } from './AdminPage.styles';
 
 export function AdminPage() {
-  const { user, isLoading, logout } = useAuth();
+  const { user, logout } = useAuth();
   const [testResult, setTestResult] = useState<string>('');
 
   const handleLogout = async () => {
@@ -15,25 +15,7 @@ export function AdminPage() {
     router.replace(ROUTES.LOGIN);
   };
 
-  if (isLoading) {
-    return (
-      <View style={styles.loadingContainer}>
-        <Text>Carregando...</Text>
-      </View>
-    );
-  }
-
   if (!user) {
-    router.replace(ROUTES.LOGIN);
-    return (
-      <View style={styles.loadingContainer}>
-        <Text>Carregando...</Text>
-      </View>
-    );
-  }
-
-  if (user.role !== 'admin') {
-    router.replace(ROUTES.USER);
     return (
       <View style={styles.loadingContainer}>
         <Text>Carregando...</Text>
