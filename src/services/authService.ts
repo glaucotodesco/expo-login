@@ -1,5 +1,6 @@
-import { LoginCredentials, LoginResponse, User, UserRole } from '../types/auth';
+import axios from 'axios';
 import { API_CONFIG } from '../config/api';
+import { LoginCredentials, LoginResponse, User, UserRole } from '../types/auth';
 
 interface LoginResult {
   success: boolean;
@@ -13,59 +14,48 @@ export const authService = {
       console.log('Tentando login com:', credentials);
       console.log('URL:', `${API_CONFIG.BASE_URL}${API_CONFIG.ENDPOINTS.SIGNIN}`);
       
-      const response = await fetch(`${API_CONFIG.BASE_URL}${API_CONFIG.ENDPOINTS.SIGNIN}`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(credentials),
-      });
+      const response = await axios.post<LoginResponse>(
+        `${API_CONFIG.BASE_URL}${API_CONFIG.ENDPOINTS.SIGNIN}`,
+        credentials
+      );
 
       console.log('Response status:', response.status);
-      console.log('Response ok:', response.ok);
-
-      if (!response.ok) {
-        const errorText = await response.text();
-        console.log('Error response:', errorText);
-        return { success: false, error: `Erro ${response.status}: ${errorText}` };
-      }
-
-      const data: LoginResponse = await response.json();
-      console.log('Login response:', data);
+      console.log('Login response:', response.data);
       
       // Determinar role baseado no username (temporário)
-      const role: UserRole = data.username === 'admin' ? 'admin' : 'user';
+      const role: UserRole = response.data.username === 'admin' ? 'admin' : 'user';
       
       const user: User = {
-        username: data.username,
+        username: response.data.username,
         role,
-        token: data.accessToken,
+        token: response.data.accessToken,
       };
 
       console.log('User created:', user);
       return { success: true, user };
     } catch (error) {
       console.log('Login error:', error);
+      if (axios.isAxiosError(error)) {
+        const errorMessage = error.response?.data || error.message;
+        return { success: false, error: `Erro ${error.response?.status}: ${errorMessage}` };
+      }
       return { success: false, error: `Erro de conexão: ${error}` };
     }
   },
 
   testEndpoint: async (endpoint: string, token: string): Promise<{ success: boolean; data?: any; error?: string }> => {
     try {
-      const response = await fetch(`${API_CONFIG.BASE_URL}/test/${endpoint}`, {
-        method: 'GET',
+      const response = await axios.get(`${API_CONFIG.BASE_URL}/test/${endpoint}`, {
         headers: {
           'Authorization': `Bearer ${token}`,
         },
       });
 
-      if (!response.ok) {
-        return { success: false, error: 'Acesso negado' };
-      }
-
-      const data = await response.text();
-      return { success: true, data };
+      return { success: true, data: response.data };
     } catch (error) {
+      if (axios.isAxiosError(error)) {
+        return { success: false, error: error.response?.status === 401 ? 'Acesso negado' : 'Erro na requisição' };
+      }
       return { success: false, error: 'Erro de conexão' };
     }
   },

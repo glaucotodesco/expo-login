@@ -1,5 +1,5 @@
-import React, { createContext, useContext, useState, useEffect } from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import React, { createContext, useContext, useEffect, useState } from 'react';
 import { AuthUser, User } from '../types/auth';
 
 interface AuthContextType {
@@ -9,14 +9,24 @@ interface AuthContextType {
   logout: () => Promise<void>;
 }
 
+/*
+  É como uma “caixa” que armazena valores (user, isLoading, login, logout) 
+  e permite que eles sejam acessados de qualquer lugar da árvore de componentes 
+  sem precisar passar props manualmente.
+*/
 const AuthContext = createContext<AuthContextType>({
   user: null,
   isLoading: true,
-  login: async () => {},
-  logout: async () => {},
+  login: async () => { },
+  logout: async () => { },
 });
 
+/*
+  O AuthProvider é um componente que envolve toda a aplicação e fornece o contexto
+  de autenticação para todos os componentes filhos.
+*/
 export function AuthProvider({ children }: { children: React.ReactNode }) {
+
   const [user, setUser] = useState<AuthUser>(null);
   const [isLoading, setIsLoading] = useState(true);
 
@@ -37,7 +47,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     }
   };
 
-  const login = async (user: User) => {
+   const login = async (user: User) => {
     try {
       await AsyncStorage.setItem('user', JSON.stringify(user));
       setUser(user);
@@ -62,4 +72,5 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   );
 }
 
+//
 export const useAuth = () => useContext(AuthContext);
