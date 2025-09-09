@@ -36,4 +36,15 @@ export const styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: 'bold',
   },
+  testButton: {
+    backgroundColor: '#28a745',
+    padding: 10,
+    borderRadius: 8,
+    marginTop: 10,
+  },
+  testButtonText: {
+    color: '#fff',
+    textAlign: 'center',
+    fontSize: 14,
+  },
 });

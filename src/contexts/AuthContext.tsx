@@ -1,11 +1,11 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { AuthUser } from '../types/auth';
+import { AuthUser, User } from '../types/auth';
 
 interface AuthContextType {
   user: AuthUser;
   isLoading: boolean;
-  login: (email: string, role: 'user' | 'admin') => Promise<void>;
+  login: (user: User) => Promise<void>;
   logout: () => Promise<void>;
 }
 
@@ -37,11 +37,10 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     }
   };
 
-  const login = async (email: string, role: 'user' | 'admin') => {
+  const login = async (user: User) => {
     try {
-      const userData = { email, role };
-      await AsyncStorage.setItem('user', JSON.stringify(userData));
-      setUser(userData);
+      await AsyncStorage.setItem('user', JSON.stringify(user));
+      setUser(user);
     } catch (error) {
       console.error('Erro ao fazer login:', error);
     }
